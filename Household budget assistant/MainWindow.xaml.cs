@@ -1,11 +1,10 @@
-﻿
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using Spire.Xls;
-using System.IO;
+
 /* 
 Известные баги/недоделки:
 - запилить график отображения данных
@@ -26,6 +25,7 @@ namespace Personal_Budget_Assistant__Main_
         OpenFileDialog openFileDialog = new OpenFileDialog();
         SaveFileDialog saveFileDialog = new SaveFileDialog();
         Workbook book = new Workbook();
+        Workbook data_book = new Workbook();
         public String path;
 
         public MainWindow()
@@ -173,7 +173,8 @@ namespace Personal_Budget_Assistant__Main_
             path = openFileDialog.FileName;
         }
 
-        private void BtnSave_Click(object sender, RoutedEventArgs e)
+        private void BtnSave_Click(object sender, RoutedEventArgs e) // doesn't work they way it should
+            //need to find the way to store path variable after the app shuts down
         {
             try
             {
@@ -185,7 +186,7 @@ namespace Personal_Budget_Assistant__Main_
 
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
         {
-            openFileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+            openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
             path = openFileDialog.FileName;
             if (openFileDialog.ShowDialog() == true)
                 items.getDataTable().Rows.Clear();
@@ -195,28 +196,26 @@ namespace Personal_Budget_Assistant__Main_
                 UpdateTotal();
             }
             catch (ArgumentException) { return; }
+            catch (System.Xml.XmlException) { return; }
         }
 
-        private void BtnImportXLS(object sender, RoutedEventArgs e)
+        private void BtnImportExcel(object sender, RoutedEventArgs e) //works, but doesn't display
         {
-            openFileDialog.Filter = "xlsx files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
-
+            openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
-
-            book.LoadFromFile(openFileDialog.FileName);
-
-            DataTable table = book.Worksheets[0].ExportDataTable();
-
-            Workbook data_book = new Workbook();
-
-            data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
-
+            {
+                book.LoadFromFile(openFileDialog.FileName);
+            }
             try
             {
-                data_book.SaveToFile(path, ExcelVersion.Version2010);
+            DataTable table = book.Worksheets[0].ExportDataTable(); //may throw duplicate name exception 
+            data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
+            data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2010);
+            DataGridView.ItemsSource = table.AsDataView();
             }
-            catch (System.ArgumentNullException) { return;  }
-
+            catch (ArgumentNullException) { return;  }
+            catch (ArgumentException) { return; }
+            catch (DuplicateNameException) { MessageBox.Show("Your excel file contains duplicate column!","Duplicate Column"); }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
