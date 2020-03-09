@@ -75,7 +75,7 @@ namespace Personal_Budget_Assistant__Main_
             if (MessageBox.Show("Are you sure you want to erase all data from the current table?", "Delete all rows?",
             MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 items.getDataTable().Rows.Clear();
-            BalanceBox.SelectedText = Convert.ToString(0);//костыль
+            BalanceBox.SelectedText = Convert.ToString(0);//seriously?
         }
 
         private void BtnDeleteSelected_Click(object sender, RoutedEventArgs e)
