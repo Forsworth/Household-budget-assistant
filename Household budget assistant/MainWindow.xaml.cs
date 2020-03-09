@@ -4,12 +4,14 @@ using System;
 using System.Data;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+using Spire.Xls;
+using System.IO;
 /* 
 Известные баги/недоделки:
 - запилить график отображения данных
 - сделать импорт из xls
 - сделать hotkey удаления рядов
+- сделать возможность распечатывать таблицу
 */
 
 namespace Personal_Budget_Assistant__Main_
@@ -23,7 +25,8 @@ namespace Personal_Budget_Assistant__Main_
         DataSourceTable items = new DataSourceTable();
         OpenFileDialog openFileDialog = new OpenFileDialog();
         SaveFileDialog saveFileDialog = new SaveFileDialog();
-
+        Workbook book = new Workbook();
+        public String path;
 
         public MainWindow()
         {
@@ -167,21 +170,23 @@ namespace Personal_Budget_Assistant__Main_
             saveFileDialog.Filter = "XML-File | *.xml";
             if (saveFileDialog.ShowDialog() == true)
                 items.getDataTable().WriteXml(saveFileDialog.FileName);
+            path = openFileDialog.FileName;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                items.getDataTable().WriteXml(saveFileDialog.FileName);
+                items.getDataTable().WriteXml(path);
             }
-            catch (System.ArgumentException) { MessageBox.Show("Couldn't find saved path!", "Unknown path"); }
+            catch (System.ArgumentException) { MessageBox.Show("Couldn't find saved path!", "Unknown path error"); }
         }
 
 
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
         {
             openFileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+            path = openFileDialog.FileName;
             if (openFileDialog.ShowDialog() == true)
                 items.getDataTable().Rows.Clear();
             try
@@ -190,6 +195,28 @@ namespace Personal_Budget_Assistant__Main_
                 UpdateTotal();
             }
             catch (ArgumentException) { return; }
+        }
+
+        private void BtnImportXLS(object sender, RoutedEventArgs e)
+        {
+            openFileDialog.Filter = "xlsx files (*.xlsx)|*.xlsx|All files (*.*)|*.*";
+
+            if (openFileDialog.ShowDialog() == true)
+
+            book.LoadFromFile(openFileDialog.FileName);
+
+            DataTable table = book.Worksheets[0].ExportDataTable();
+
+            Workbook data_book = new Workbook();
+
+            data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
+
+            try
+            {
+                data_book.SaveToFile(path, ExcelVersion.Version2010);
+            }
+            catch (System.ArgumentNullException) { return;  }
+
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)

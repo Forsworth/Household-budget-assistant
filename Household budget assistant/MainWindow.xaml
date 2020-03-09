@@ -24,6 +24,7 @@
         <Menu Height="25" VerticalAlignment="Top" Background="#FFE8E8E8">
             <MenuItem Header="File" Height="24" Width="40" Click="MenuItem_Click">
                 <MenuItem Header="Open"  Click="BtnOpen_Click" ></MenuItem>
+                <MenuItem Header="Import XLS" Click="BtnImportXLS"></MenuItem>
                 <MenuItem Header="Save"  Click="BtnSave_Click" ></MenuItem>
                 <MenuItem Header="Save As"  Click="BtnSaveAs_Click">
                 </MenuItem>
