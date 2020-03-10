@@ -211,7 +211,10 @@ namespace Personal_Budget_Assistant__Main_
             DataTable table = book.Worksheets[0].ExportDataTable(); //may throw duplicate name exception 
             data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
             data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2010);
-            DataGridView.ItemsSource = table.AsDataView();
+                foreach (DataRow dr in table.Rows)
+                {
+                items.getDataTable().ImportRow(dr);
+                }
             }
             catch (ArgumentNullException) { return;  }
             catch (ArgumentException) { return; }
