@@ -57,7 +57,7 @@ namespace Personal_Budget_Assistant__Main_
                 nextRow[6] = Convert.ToDecimal(SavingsField1.Text);
                 nextRow[7] = Convert.ToString("No comments yet");
                 items.getDataTable().Rows.Add(nextRow);
-                DataGridView.ItemsSource = items.getDataTable().AsDataView();
+                //DataGridView.ItemsSource = items.getDataTable().AsDataView();
                 UpdateTotal();
             }
             catch (ArgumentException) { MessageBox.Show(warningA, titleA); }
@@ -199,7 +199,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (System.Xml.XmlException) { return; }
         }
 
-        private void BtnImportExcel(object sender, RoutedEventArgs e) //works, but doesn't display
+        private void BtnImportExcel(object sender, RoutedEventArgs e) //displays updated table, but can't compute it correctly
         {
             openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
@@ -215,6 +215,7 @@ namespace Personal_Budget_Assistant__Main_
                 {
                 items.getDataTable().ImportRow(dr);
                 }
+                UpdateTotal();
             }
             catch (ArgumentNullException) { return;  }
             catch (ArgumentException) { return; }
