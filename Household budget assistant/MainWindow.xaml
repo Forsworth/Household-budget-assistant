@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Personal_Budget_Assistant__Main_"
         mc:Ignorable="d"
-        Title="Personal Budget Assistant (Alpha v.0.1.2)" Height="579" Width="859" Loaded="Window_Loaded" Background="#FF92ABC3">
+        Title="Personal Budget Assistant (Alpha v.0.4.0 unstable)" Height="579" Width="859" Loaded="Window_Loaded" Background="#FF92ABC3">
     <Grid>
         <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsReadOnly="True" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged">
         </DataGrid>
@@ -33,7 +33,7 @@
             </MenuItem>
             <MenuItem Header="Rows" Width="40" Height="24">
                 <MenuItem Header="Add"  Click="BtnAddRow_Click"></MenuItem>
-                <MenuItem Header="Delete Selected"  Click="BtnDeleteSelected_Click"></MenuItem>
+                <MenuItem Header="DeleteSelected"  Click="BtnDeleteSelected_Click"></MenuItem>
                 <MenuItem Header="Delete All"  Click="BtnDeleteAll_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="Total" Width="40" Height="24">

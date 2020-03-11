@@ -4,11 +4,12 @@ using System.Data;
 using System.Windows;
 using System.Windows.Controls;
 using Spire.Xls;
+using System.Xml;
+
 
 /* 
 Известные баги/недоделки:
 - запилить график отображения данных
-- сделать импорт из xls
 - сделать hotkey удаления рядов
 - сделать возможность распечатывать таблицу
 */
@@ -21,11 +22,11 @@ namespace Personal_Budget_Assistant__Main_
     /// 
     public partial class MainWindow : Window
     {
-        DataSourceTable items = new DataSourceTable();
-        OpenFileDialog openFileDialog = new OpenFileDialog();
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        Workbook book = new Workbook();
-        Workbook data_book = new Workbook();
+        private DataSourceTable items = new DataSourceTable();
+        private OpenFileDialog openFileDialog = new OpenFileDialog();
+        private SaveFileDialog saveFileDialog = new SaveFileDialog();
+        private Workbook book = new Workbook();
+        private Workbook data_book = new Workbook();
         public String path;
 
         public MainWindow()
@@ -57,7 +58,7 @@ namespace Personal_Budget_Assistant__Main_
                 nextRow[6] = Convert.ToDecimal(SavingsField1.Text);
                 nextRow[7] = Convert.ToString("No comments yet");
                 items.getDataTable().Rows.Add(nextRow);
-                //DataGridView.ItemsSource = items.getDataTable().AsDataView();
+                DataGridView.ItemsSource = items.getDataTable().AsDataView();
                 UpdateTotal();
             }
             catch (ArgumentException) { MessageBox.Show(warningA, titleA); }
@@ -88,7 +89,10 @@ namespace Personal_Budget_Assistant__Main_
                 decimal tmpInc;
                 decimal tmpExp;
                 decimal diff;
-                decimal balanceCol = Convert.ToDecimal(BalanceBox.SelectedText);
+                try
+                {
+                    decimal balanceCol = Convert.ToDecimal(BalanceBox.SelectedText);
+
                 decimal result;
                 DataRowView drv = (DataRowView)DataGridView.SelectedItem;
                 tmpInc = Convert.ToDecimal(drv.Row.ItemArray.GetValue(3));
@@ -104,6 +108,9 @@ namespace Personal_Budget_Assistant__Main_
                 }
                 else BalanceBox.SelectedText = Convert.ToString(0);
                 UpdateTotal();
+                }
+                catch (FormatException) { return; }
+                catch (InvalidCastException) { MessageBox.Show("Some computed fields contain null values! Please change the source file null values by 0."); return; }
             }
         }
 
@@ -180,7 +187,7 @@ namespace Personal_Budget_Assistant__Main_
             {
                 items.getDataTable().WriteXml(path);
             }
-            catch (System.ArgumentException) { MessageBox.Show("Couldn't find saved path!", "Unknown path error"); }
+            catch (ArgumentException) { MessageBox.Show("Couldn't find saved path!", "Unknown path error"); }
         }
 
 
@@ -196,12 +203,12 @@ namespace Personal_Budget_Assistant__Main_
                 UpdateTotal();
             }
             catch (ArgumentException) { return; }
-            catch (System.Xml.XmlException) { return; }
+            catch (XmlException) { return; }
         }
 
-        private void BtnImportExcel(object sender, RoutedEventArgs e) //displays updated table, but can't compute it correctly
+        private void BtnImportExcel(object sender, RoutedEventArgs e) 
         {
-            openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx|All files (*.*)|*.*";
+            openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx;|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
                 book.LoadFromFile(openFileDialog.FileName);
@@ -210,7 +217,7 @@ namespace Personal_Budget_Assistant__Main_
             {
             DataTable table = book.Worksheets[0].ExportDataTable(); //may throw duplicate name exception 
             data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
-            data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2010);
+            data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2016);
                 foreach (DataRow dr in table.Rows)
                 {
                 items.getDataTable().ImportRow(dr);
