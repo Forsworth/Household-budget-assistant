@@ -8,28 +8,29 @@ namespace Personal_Budget_Assistant__Main_
     {
         private DataTable _dt = new DataTable("BudgetTable");
 
+        private DataColumn _date = new DataColumn("Date", typeof(DateTime));
+        private DataColumn _type = new DataColumn("Type", typeof(String));
+        private DataColumn _name = new DataColumn("Name", typeof(String));
+        private DataColumn _expenses = new DataColumn("Expenses", typeof(decimal));
+        private DataColumn _income = new DataColumn("Income", typeof(decimal));
+        private DataColumn _saldo = new DataColumn("Saldo", typeof(decimal), "Income - Expenses");
+        private DataColumn _savings = new DataColumn("Savings", typeof(decimal));
+        private DataColumn _comments = new DataColumn("Comments", typeof(String));
+
         public DataTable getDataTable()
         {
             return this._dt;
         }
         public void FillDataGridView()
         {
-            DataColumn date = new DataColumn("Date", typeof(DateTime));
-            DataColumn type = new DataColumn("Type", typeof(String));
-            DataColumn name = new DataColumn("Name", typeof(String));
-            DataColumn expenses = new DataColumn("Expenses", typeof(decimal));
-            DataColumn income = new DataColumn("Income", typeof(decimal));
-            DataColumn saldo = new DataColumn("Saldo", typeof(decimal), "Income - Expenses");
-            DataColumn savings = new DataColumn("Savings", typeof(decimal));
-            DataColumn comments = new DataColumn("Comments", typeof(String));
-            _dt.Columns.Add(date);
-            _dt.Columns.Add(type);
-            _dt.Columns.Add(name);
-            _dt.Columns.Add(expenses);
-            _dt.Columns.Add(income);
-            _dt.Columns.Add(saldo);
-            _dt.Columns.Add(savings);
-            _dt.Columns.Add(comments);
+            _dt.Columns.Add(_date);
+            _dt.Columns.Add(_type);
+            _dt.Columns.Add(_name);
+            _dt.Columns.Add(_expenses);
+            _dt.Columns.Add(_income);
+            _dt.Columns.Add(_saldo);
+            _dt.Columns.Add(_savings);
+            _dt.Columns.Add(_comments);
         }
     }
 }

@@ -190,7 +190,6 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentException) { MessageBox.Show("Couldn't find saved path!", "Unknown path error"); }
         }
 
-
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
         {
             openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
@@ -206,7 +205,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (XmlException) { return; }
         }
 
-        private void BtnImportExcel(object sender, RoutedEventArgs e) 
+        private void BtnImportFromExcel(object sender, RoutedEventArgs e) 
         {
             openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx;|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
@@ -227,6 +226,24 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentNullException) { return;  }
             catch (ArgumentException) { return; }
             catch (DuplicateNameException) { MessageBox.Show("Your excel file contains duplicate column!","Duplicate Column"); }
+        }
+
+        private void BtnSaveToExcel(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Workbook workbook = new Workbook();
+                Worksheet sheet = workbook.Worksheets[0];
+                saveFileDialog.Filter = "excel file | *.xlsx;*xls;";
+                if (saveFileDialog.ShowDialog() == true)
+                //Export datatable to excel
+                sheet.InsertDataTable((DataTable)this.items.getDataTable(), true, 1, 1, -1, -1);
+                sheet.AllocatedRange.AutoFitColumns();
+                sheet.AllocatedRange.AutoFitRows();
+                //Save the file
+                workbook.SaveToFile(saveFileDialog.FileName, ExcelVersion.Version2013);
+            }
+            catch (System.ArgumentOutOfRangeException) { return; }
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
