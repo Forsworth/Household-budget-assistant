@@ -9,31 +9,27 @@ using System.Xml;
 
 /* 
 Известные баги/недоделки:
-- запилить график отображения данных
+- сделать график отображения данных
 - сделать hotkey удаления рядов
 - сделать возможность распечатывать таблицу
 */
 
 namespace Personal_Budget_Assistant__Main_
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
     public partial class MainWindow : Window
     {
-        private DataSourceTable items = new DataSourceTable();
+        private DataSourceTable dataSource = new DataSourceTable();
         private OpenFileDialog openFileDialog = new OpenFileDialog();
         private SaveFileDialog saveFileDialog = new SaveFileDialog();
         private Workbook book = new Workbook();
         private Workbook data_book = new Workbook();
-        public String path;
+        public string path;
 
         public MainWindow()
         {
             InitializeComponent();
-            items.FillDataGridView();
-            DataGridView.ItemsSource = items.getDataTable().AsDataView();
+            dataSource.FillDataGridView();
+            DataGridView.ItemsSource = dataSource.getDataTable().AsDataView();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -49,7 +45,7 @@ namespace Personal_Budget_Assistant__Main_
             string titleB = "Value Error";
             try
             {
-                DataRow nextRow = items.getDataTable().NewRow();
+                DataRow nextRow = dataSource.getDataTable().NewRow();
                 nextRow[0] = DateTime.Now.ToString();
                 nextRow[1] = CbbxType.SelectedValue;
                 nextRow[2] = Convert.ToString(NameField1.Text);
@@ -57,8 +53,8 @@ namespace Personal_Budget_Assistant__Main_
                 nextRow[4] = Convert.ToDecimal(IncomeField1.Text);
                 nextRow[6] = Convert.ToDecimal(SavingsField1.Text);
                 nextRow[7] = Convert.ToString("No comments yet");
-                items.getDataTable().Rows.Add(nextRow);
-                DataGridView.ItemsSource = items.getDataTable().AsDataView();
+                dataSource.getDataTable().Rows.Add(nextRow);
+                DataGridView.ItemsSource = dataSource.getDataTable().AsDataView();
                 UpdateTotal();
             }
             catch (ArgumentException) { MessageBox.Show(warningA, titleA); }
@@ -76,14 +72,18 @@ namespace Personal_Budget_Assistant__Main_
 
         private void BtnDeleteAll_Click(object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to erase all data from the current table?", "Delete all rows?",
-            MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                items.getDataTable().Rows.Clear();
+            string warning = "Are you sure you want to erase all data from the current table?";
+            string title = "Delete all rows?";
+            if (MessageBox.Show(warning, title, MessageBoxButton.YesNo, 
+                MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                dataSource.getDataTable().Rows.Clear();
             BalanceBox.SelectedText = Convert.ToString(0);//seriously?
         }
 
         private void BtnDeleteSelected_Click(object sender, RoutedEventArgs e)
         {
+            string warning = "Some computed fields " +
+                    "contain null values! Please change the source file null values by 0.";
             while (DataGridView.SelectedItems.Count >= 1)
             {
                 decimal tmpInc;
@@ -101,7 +101,7 @@ namespace Personal_Budget_Assistant__Main_
                 drv.Row.Delete();
                 UpdateTotal();
                 result = balanceCol - diff;
-                if (items.getDataTable().Rows.Count > 0)
+                if (dataSource.getDataTable().Rows.Count > 0)
                 {
                     BalanceBox.SelectedText = result.ToString();
                     UpdateTotal();
@@ -110,7 +110,7 @@ namespace Personal_Budget_Assistant__Main_
                 UpdateTotal();
                 }
                 catch (FormatException) { return; }
-                catch (InvalidCastException) { MessageBox.Show("Some computed fields contain null values! Please change the source file null values by 0."); return; }
+                catch (InvalidCastException) { MessageBox.Show(warning); return; }
             }
         }
 
@@ -125,8 +125,10 @@ namespace Personal_Budget_Assistant__Main_
 
             try
             {
-                decimal sumIncome = Convert.ToDecimal(items.getDataTable().Compute("SUM(Income)", string.Empty));
-                decimal sumExpense = Convert.ToDecimal(items.getDataTable().Compute("SUM(Expenses)", string.Empty));
+                decimal sumIncome = Convert.ToDecimal
+                    (dataSource.getDataTable().Compute("SUM(Income)", string.Empty));
+                decimal sumExpense = Convert.ToDecimal
+                    (dataSource.getDataTable().Compute("SUM(Expenses)", string.Empty));
                 total = sumIncome - sumExpense;
                 MessageBox.Show(total.ToString(), title);
             }
@@ -139,8 +141,10 @@ namespace Personal_Budget_Assistant__Main_
             decimal total;
             try
             {
-                decimal sumIncome = Convert.ToDecimal(items.getDataTable().Compute("SUM(Income)", string.Empty));
-                decimal sumExpense = Convert.ToDecimal(items.getDataTable().Compute("SUM(Expenses)", string.Empty));
+                decimal sumIncome = Convert.ToDecimal
+                    (dataSource.getDataTable().Compute("SUM(Income)", string.Empty));
+                decimal sumExpense = Convert.ToDecimal
+                    (dataSource.getDataTable().Compute("SUM(Expenses)", string.Empty));
                 total = sumIncome - sumExpense;
                 BalanceBox.SelectedText = total.ToString();
             }
@@ -155,7 +159,8 @@ namespace Personal_Budget_Assistant__Main_
             string title = "You have managed to save:";
             try
             {
-                decimal savings = Convert.ToDecimal(items.getDataTable().Compute("SUM(Savings)", string.Empty));
+                decimal savings = Convert.ToDecimal
+                    (dataSource.getDataTable().Compute("SUM(Savings)", string.Empty));
                 MessageBox.Show(savings.ToString(), title);
 
             }
@@ -176,18 +181,20 @@ namespace Personal_Budget_Assistant__Main_
         {
             saveFileDialog.Filter = "XML-File | *.xml";
             if (saveFileDialog.ShowDialog() == true)
-                items.getDataTable().WriteXml(saveFileDialog.FileName);
+                dataSource.getDataTable().WriteXml(saveFileDialog.FileName);
             path = openFileDialog.FileName;
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e) // doesn't work they way it should
             //need to find the way to store path variable after the app shuts down
         {
+            string warning = "Couldn't find saved path!";
+            string title = "Unknown path error";
             try
             {
-                items.getDataTable().WriteXml(path);
+                dataSource.getDataTable().WriteXml(path);
             }
-            catch (ArgumentException) { MessageBox.Show("Couldn't find saved path!", "Unknown path error"); }
+            catch (ArgumentException) { MessageBox.Show(warning, title); }
         }
 
         private void BtnOpen_Click(object sender, RoutedEventArgs e)
@@ -195,10 +202,10 @@ namespace Personal_Budget_Assistant__Main_
             openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
             path = openFileDialog.FileName;
             if (openFileDialog.ShowDialog() == true)
-                items.getDataTable().Rows.Clear();
+                dataSource.getDataTable().Rows.Clear();
             try
             {
-                items.getDataTable().ReadXml(openFileDialog.FileName);
+                dataSource.getDataTable().ReadXml(openFileDialog.FileName);
                 UpdateTotal();
             }
             catch (ArgumentException) { return; }
@@ -207,6 +214,8 @@ namespace Personal_Budget_Assistant__Main_
 
         private void BtnImportFromExcel(object sender, RoutedEventArgs e) 
         {
+            string warning = "Your excel file contains duplicate column!";
+            string title = "Duplicate Column";
             openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx;|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
@@ -214,18 +223,18 @@ namespace Personal_Budget_Assistant__Main_
             }
             try
             {
-            DataTable table = book.Worksheets[0].ExportDataTable(); //may throw duplicate name exception 
+            DataTable table = book.Worksheets[0].ExportDataTable(); 
             data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
             data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2016);
                 foreach (DataRow dr in table.Rows)
                 {
-                items.getDataTable().ImportRow(dr);
+                dataSource.getDataTable().ImportRow(dr);
                 }
                 UpdateTotal();
             }
             catch (ArgumentNullException) { return;  }
             catch (ArgumentException) { return; }
-            catch (DuplicateNameException) { MessageBox.Show("Your excel file contains duplicate column!","Duplicate Column"); }
+            catch (DuplicateNameException) { MessageBox.Show(warning,title); }
         }
 
         private void BtnSaveToExcel(object sender, RoutedEventArgs e)
@@ -237,14 +246,16 @@ namespace Personal_Budget_Assistant__Main_
                 saveFileDialog.Filter = "excel file | *.xlsx;*xls;";
                 if (saveFileDialog.ShowDialog() == true)
                 //Export datatable to excel
-                sheet.InsertDataTable((DataTable)this.items.getDataTable(), true, 1, 1, -1, -1);
+                sheet.InsertDataTable((DataTable)this.dataSource.getDataTable(), true, 1, 1, -1, -1);
                 sheet.AllocatedRange.AutoFitColumns();
                 sheet.AllocatedRange.AutoFitRows();
                 //Save the file
                 workbook.SaveToFile(saveFileDialog.FileName, ExcelVersion.Version2013);
             }
-            catch (System.ArgumentOutOfRangeException) { return; }
+            catch (ArgumentOutOfRangeException) { return; }
         }
+
+
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
