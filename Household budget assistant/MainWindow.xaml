@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Personal_Budget_Assistant__Main_"
         mc:Ignorable="d"
-        Title="Personal Budget Assistant (Alpha v.0.4.0 unstable)" Height="579" Width="859" Loaded="Window_Loaded" Background="#FF92ABC3">
+        Title="Household Budget Assistant (Alpha v.0.5.0 stable)" Height="579" Width="859" Loaded="Window_Loaded" Background="#FF92ABC3">
     <Grid>
         <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsReadOnly="True" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged">
         </DataGrid>
@@ -26,7 +26,7 @@
                 <MenuItem Header="Open (.xml)"  Click="BtnOpen_Click" ></MenuItem>
                 <MenuItem Header="Save (.xml)"  Click="BtnSave_Click" ></MenuItem>
                 <MenuItem Header="Save As (.xml)"  Click="BtnSaveAs_Click"></MenuItem>
-                <MenuItem Header="Open (.xlsx/.xls)" Click="BtnImportFromExcel"></MenuItem>
+                <MenuItem Header="Open (.xlsx/.xls)" Click="BtnOpenExcel"></MenuItem>
                 <MenuItem Header="Save as (.xlsx/.xls)" Click="BtnSaveToExcel"></MenuItem>
                 <Separator />
                 <MenuItem Header="About" Click="BtnAbout_Click"></MenuItem>
