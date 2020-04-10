@@ -8,12 +8,12 @@ using System.Windows;
 // набор атрибутов. Измените значения этих атрибутов, чтобы изменить сведения,
 // связанные со сборкой.
 [assembly: AssemblyTitle("Household budget assistant")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Household budget assistant program aimed at simplifying your budget managing.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Vekktrsz.")]
 [assembly: AssemblyProduct("Household budget assistant")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyTrademark("Creative Commons")]
 [assembly: AssemblyCulture("")]
 
 // Установка значения False для параметра ComVisible делает типы в этой сборке невидимыми

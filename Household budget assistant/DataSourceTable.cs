@@ -4,7 +4,7 @@ using System.Data;
 
 namespace Personal_Budget_Assistant__Main_
 {
-    //ООП часть организовал так. Хотелось бы понять, достаточно ли этого или все стоит сделать иначе?
+   
     class DataSourceTable
     {
         private DataTable dt = new DataTable("BudgetTable");
@@ -18,7 +18,7 @@ namespace Personal_Budget_Assistant__Main_
         private DataColumn savings = new DataColumn("Savings", typeof(decimal));
         private DataColumn comments = new DataColumn("Comments", typeof(String));
 
-        public DataTable getDataTable() //поскольку глобальной переменной DataTable оставлять - грех
+        public DataTable getDataTable() 
         {
             return this.dt;
         }

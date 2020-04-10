@@ -5,13 +5,15 @@ using System.Windows;
 using System.Windows.Controls;
 using Spire.Xls;
 using System.Xml;
+using System.Collections.Specialized;
 
 
 /* 
 Известные баги/недоделки:
-- сделать график отображения данных (нужен новый класс?)
-- сделать hotkey удаления рядов (каким образом? Пока наиболее интересующий вопрос)
-- сделать возможность распечатывать таблицу 
+- сделать график отображения данных 
+- сделать hotkey удаления рядов (событие) !!!
+//ну или разобраться, как запретить менять значения ячеек некоторых
+- сделать кнопку быстрого сохранения !!!
 */
 
 namespace Personal_Budget_Assistant__Main_
@@ -58,7 +60,7 @@ namespace Personal_Budget_Assistant__Main_
                 nextRow[3] = Convert.ToDecimal(ExpensesField1.Text);
                 nextRow[4] = Convert.ToDecimal(IncomeField1.Text);
                 nextRow[6] = Convert.ToDecimal(SavingsField1.Text);
-                nextRow[7] = Convert.ToString("No comments yet");
+                nextRow[7] = Convert.ToString(CommentsField.Text);
                 dataSource.getDataTable().Rows.Add(nextRow);
                 DataGridView.ItemsSource = dataSource.getDataTable().AsDataView();
                 UpdateTotal();
@@ -66,6 +68,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentException) { MessageBox.Show(warningA, titleA); }
             catch (OverflowException) { MessageBox.Show(warningB, titleB); }
             catch (FormatException) { MessageBox.Show(warningA, titleA); }
+            catch(InvalidOperationException) { MessageBox.Show(warningA, titleA); }
         }
         private void TTipAddRow()
         {
@@ -209,7 +212,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentException) { MessageBox.Show(warning, title); }
         }
 
-        private void BtnOpen_Click(object sender, RoutedEventArgs e) // кнокп "открыть XML"
+        private void BtnOpen_Click(object sender, RoutedEventArgs e) // кнопка "открыть XML"
         {
             openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
             path = openFileDialog.FileName;
@@ -268,9 +271,13 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentOutOfRangeException) { return; }
         }
 
+        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            // e.Key
+        }
 
-        /*Некоторые методы остались подвисшими. 
-        Пока не разобрался, как их убрать отсюда так, чтобы программа не вылетала*/
+
+
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
 
@@ -285,5 +292,7 @@ namespace Personal_Budget_Assistant__Main_
         {
 
         }
+
+
     }
 }

@@ -5,10 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Personal_Budget_Assistant__Main_"
         mc:Ignorable="d"
-        Title="Household Budget Assistant (Alpha v.0.5.0 stable)" Height="579" Width="859" Loaded="Window_Loaded" Background="#FF92ABC3">
+        Title="Household Budget Assistant (Alpha v.0.5.1)" Height="579" Width="1009" Loaded="Window_Loaded" Background="#FF92ABC3" KeyDown="Window_KeyDown" Icon="1462406.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsReadOnly="True" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged">
-        </DataGrid>
+        <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged"/>
         <Label Content="Date" HorizontalAlignment="Left" Margin="42,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132" FontFamily="Segoe UI"/>
         <Label x:Name="NameField" Content="Name" HorizontalAlignment="Left" Margin="279,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
         <TextBox x:Name="NameField1" HorizontalAlignment="Left" Margin="249,51,0,0" TextWrapping="Wrap" Width="120" Height="18" VerticalAlignment="Top"/>
@@ -20,7 +19,7 @@
         </DatePicker>
         <Label x:Name="SavingsField" Content="Savings" HorizontalAlignment="Left" Margin="659,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
         <TextBox x:Name="SavingsField1" HorizontalAlignment="Left" Margin="624,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="SavingsField1_TextChanged"/>
-        <Button x:Name="BtnAddRow" Content="Add Item" Margin="749,48,0,0" VerticalAlignment="Top" Click="BtnAddRow_Click" Height="21" HorizontalAlignment="Left" Width="70"/>
+        <Button x:Name="BtnAddRow" Content="Add Item" Margin="874,48,0,0" VerticalAlignment="Top" Click="BtnAddRow_Click" Height="21" HorizontalAlignment="Left" Width="70"/>
         <Menu Height="25" VerticalAlignment="Top" Background="#FFE8E8E8">
             <MenuItem Header="File" Height="24" Width="40" Click="MenuItem_Click">
                 <MenuItem Header="Open (.xml)"  Click="BtnOpen_Click" ></MenuItem>
@@ -59,5 +58,6 @@
                 </TransformGroup>
             </Label.RenderTransform>
         </Label>
+        <TextBox x:Name="CommentsField" HorizontalAlignment="Left" Height="18" Margin="749,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
     </Grid>
 </Window>
