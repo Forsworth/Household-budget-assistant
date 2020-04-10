@@ -6,14 +6,13 @@ using System.Windows.Controls;
 using Spire.Xls;
 using System.Xml;
 using System.Collections.Specialized;
+using System.Windows.Input;
 
 
 /* 
 Известные баги/недоделки:
 - сделать график отображения данных 
-- сделать hotkey удаления рядов (событие) !!!
-//ну или разобраться, как запретить менять значения ячеек некоторых
-- сделать кнопку быстрого сохранения !!!
+- сделать кнопку быстрого сохранения 
 */
 
 namespace Personal_Budget_Assistant__Main_
@@ -44,7 +43,7 @@ namespace Personal_Budget_Assistant__Main_
             TTipAddRow(); //добавил программным методом tooltip, хотя лучше это сделать в xaml
         }
 
-        private void BtnAddRow_Click(object sender, RoutedEventArgs e) //добавление рядов
+        private void AddRow()
         {
             string warningA = "Wrong input. Make sure you filled all fields with correct data!";
             string titleA = "Wrong data entered";
@@ -68,7 +67,11 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentException) { MessageBox.Show(warningA, titleA); }
             catch (OverflowException) { MessageBox.Show(warningB, titleB); }
             catch (FormatException) { MessageBox.Show(warningA, titleA); }
-            catch(InvalidOperationException) { MessageBox.Show(warningA, titleA); }
+            catch (InvalidOperationException) { MessageBox.Show(warningA, titleA); }
+        }
+        private void BtnAddRow_Click(object sender, RoutedEventArgs e) //добавление рядов
+        {
+            AddRow();
         }
         private void TTipAddRow()
         {
@@ -89,10 +92,10 @@ namespace Personal_Budget_Assistant__Main_
             BalanceBox.SelectedText = Convert.ToString(0);//очевидный костыль
         }
 
-        private void BtnDeleteSelected_Click(object sender, RoutedEventArgs e) //выборочное удаление рядов
+        private void DeleteSelectedRow()
         {
             string warning = "Some computed fields " +
-                    "contain null values! Please change the source file null values by 0.";
+        "contain null values! Please change the source file null values by 0.";
             while (DataGridView.SelectedItems.Count >= 1) /*При удалении рядов нужно обновлять колонку баланса.
                 Для этого я написал элементарный алгоритм, использующий временные переменные. Вышло громоздко*/
             {
@@ -104,24 +107,29 @@ namespace Personal_Budget_Assistant__Main_
                 {
                     decimal balanceCol = Convert.ToDecimal(BalanceBox.SelectedText);
 
-                
-                DataRowView drv = (DataRowView)DataGridView.SelectedItem;
-                tmpInc = Convert.ToDecimal(drv.Row.ItemArray.GetValue(3));
-                tmpExp = Convert.ToDecimal(drv.Row.ItemArray.GetValue(4));
-                diff = tmpInc + tmpExp;
-                drv.Row.Delete();
-                result = balanceCol - diff;
-                if (dataSource.getDataTable().Rows.Count > 0)
-                {
-                    BalanceBox.SelectedText = result.ToString();
-                    UpdateTotal(); //обновляем таблицу
-                }
-                else BalanceBox.SelectedText = Convert.ToString(0);
-                UpdateTotal();
+
+                    DataRowView drv = (DataRowView)DataGridView.SelectedItem;
+                    tmpInc = Convert.ToDecimal(drv.Row.ItemArray.GetValue(3));
+                    tmpExp = Convert.ToDecimal(drv.Row.ItemArray.GetValue(4));
+                    diff = tmpInc + tmpExp;
+                    drv.Row.Delete();
+                    result = balanceCol - diff;
+                    if (dataSource.getDataTable().Rows.Count > 0)
+                    {
+                        BalanceBox.SelectedText = result.ToString();
+                        UpdateTotal(); //обновляем таблицу
+                    }
+                    else BalanceBox.SelectedText = Convert.ToString(0);
+                    UpdateTotal();
                 }
                 catch (FormatException) { return; }
                 catch (InvalidCastException) { MessageBox.Show(warning); return; }
             }
+        }
+
+        private void BtnDeleteSelected_Click(object sender, RoutedEventArgs e) //выборочное удаление рядов
+        {
+            DeleteSelectedRow();
         }
 
         private void BtnTotal_Click(object sender, RoutedEventArgs e) //кнопка подсчета общего баланса
@@ -184,17 +192,24 @@ namespace Personal_Budget_Assistant__Main_
             String info = "This software is open-source and available for " +
             "everyone to change/use/modify etc. If you need the project files, " +
             "or any additional info, e-mail me at *E-MAIL ADDRESS*" +
+            "\n\nHotkeys: Ctrl+R - adds row, Ctrl+D - deletes selected row, " +
+            "Ctrl+S - saves as xml, Ctrl+E - saves as xlsx." +
             "\n\nDeveloped by 'Vekktrsz.', 2020";
             String title = "Household Budget Assistant";
             MessageBox.Show(info, title);
         }
 
-        private void BtnSaveAs_Click(object sender, RoutedEventArgs e) // кнопка "сохранить как XML"
+        private void SaveAsXml()
         {
             saveFileDialog.Filter = "XML-File | *.xml";
             if (saveFileDialog.ShowDialog() == true)
                 dataSource.getDataTable().WriteXml(saveFileDialog.FileName);
             path = openFileDialog.FileName;
+        }
+
+        private void BtnSaveAs_Click(object sender, RoutedEventArgs e) // кнопка "сохранить как XML"
+        {
+            SaveAsXml();
         }
 
         private void BtnSave_Click(object sender, RoutedEventArgs e) /* тут я пытался сделать так,
@@ -252,8 +267,8 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentException) { return; }
             catch (DuplicateNameException) { MessageBox.Show(warning,title); }
         }
-
-        private void BtnSaveToExcel(object sender, RoutedEventArgs e) //сохранение в excel
+        
+        private void SaveAsExcel()
         {
             try
             {
@@ -261,8 +276,8 @@ namespace Personal_Budget_Assistant__Main_
                 Worksheet sheet = workbook.Worksheets[0];
                 saveFileDialog.Filter = "excel file | *.xlsx;*xls;";
                 if (saveFileDialog.ShowDialog() == true)
-                //Export datatable to excel
-                sheet.InsertDataTable((DataTable)this.dataSource.getDataTable(), true, 1, 1, -1, -1);
+                    //Export datatable to excel
+                    sheet.InsertDataTable((DataTable)this.dataSource.getDataTable(), true, 1, 1, -1, -1);
                 sheet.AllocatedRange.AutoFitColumns();
                 sheet.AllocatedRange.AutoFitRows();
                 //Save the file
@@ -270,10 +285,29 @@ namespace Personal_Budget_Assistant__Main_
             }
             catch (ArgumentOutOfRangeException) { return; }
         }
+        private void BtnSaveToExcel(object sender, RoutedEventArgs e) //сохранение в excel
+        {
+            SaveAsExcel();
+        }
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            // e.Key
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.R))
+            {
+                AddRow();
+            }
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.D))
+            {
+                DeleteSelectedRow(); 
+            }
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S))
+            {
+                SaveAsXml();      
+            }
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.E))
+            {
+                SaveAsExcel();
+            }
         }
 
 

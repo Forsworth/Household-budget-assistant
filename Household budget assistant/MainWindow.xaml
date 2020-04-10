@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Household Budget Assistant (Alpha v.0.5.1)" Height="579" Width="1009" Loaded="Window_Loaded" Background="#FF92ABC3" KeyDown="Window_KeyDown" Icon="1462406.png" WindowStartupLocation="CenterScreen">
     <Grid>
-        <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged"/>
+        <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged" IsReadOnly="True"/>
         <Label Content="Date" HorizontalAlignment="Left" Margin="42,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132" FontFamily="Segoe UI"/>
         <Label x:Name="NameField" Content="Name" HorizontalAlignment="Left" Margin="279,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
         <TextBox x:Name="NameField1" HorizontalAlignment="Left" Margin="249,51,0,0" TextWrapping="Wrap" Width="120" Height="18" VerticalAlignment="Top"/>
