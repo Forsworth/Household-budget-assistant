@@ -12,6 +12,7 @@ using Household_budget_assistant.Properties;
 /* 
 Известные баги/недоделки:
 - сделать график отображения данных 
+- программа должна сохранять состояние при закрытии
 */
 
 namespace Personal_Budget_Assistant__Main_
@@ -245,7 +246,7 @@ namespace Personal_Budget_Assistant__Main_
             string title = "Unknown path error";
             try
             {
-                if (isXmlPath) //doesn't save path
+                if (isXmlPath) //works
                 {
                     dataSource.getDataTable().WriteXml(pathXml);
                 }
