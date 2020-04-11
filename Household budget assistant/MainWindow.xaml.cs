@@ -5,14 +5,13 @@ using System.Windows;
 using System.Windows.Controls;
 using Spire.Xls;
 using System.Xml;
-using System.Collections.Specialized;
 using System.Windows.Input;
+using Household_budget_assistant.Properties;
 
 
 /* 
 Известные баги/недоделки:
 - сделать график отображения данных 
-- сделать кнопку быстрого сохранения 
 */
 
 namespace Personal_Budget_Assistant__Main_
@@ -24,7 +23,9 @@ namespace Personal_Budget_Assistant__Main_
         private SaveFileDialog saveFileDialog;
         private Workbook book;
         private Workbook data_book;
-        public string path;
+        private string pathXml = Settings.Default.pathXml;
+        private string pathExcel = Settings.Default.pathExcel;
+        private bool isXmlPath;
 
         public MainWindow()
         {
@@ -40,7 +41,7 @@ namespace Personal_Budget_Assistant__Main_
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            TTipAddRow(); //добавил программным методом tooltip, хотя лучше это сделать в xaml
+            TTipAddRow(); 
         }
 
         private void AddRow()
@@ -48,8 +49,7 @@ namespace Personal_Budget_Assistant__Main_
             string warningA = "Wrong input. Make sure you filled all fields with correct data!";
             string titleA = "Wrong data entered";
             string warningB = "The value is too big to compute!";
-            string titleB = "Value Error"; /*насколько оправдано такое применение string для "читаемости" кода?
-            сделал это только для этого, хотя плодить такие переменные, думаю, не лучшая практика*/
+            string titleB = "Value Error"; 
             try
             {
                 DataRow nextRow = dataSource.getDataTable().NewRow();
@@ -89,15 +89,14 @@ namespace Personal_Budget_Assistant__Main_
             if (MessageBox.Show(warning, title, MessageBoxButton.YesNo, 
                 MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 dataSource.getDataTable().Rows.Clear();
-            BalanceBox.SelectedText = Convert.ToString(0);//очевидный костыль
+            BalanceBox.SelectedText = Convert.ToString(0);
         }
 
         private void DeleteSelectedRow()
         {
             string warning = "Some computed fields " +
         "contain null values! Please change the source file null values by 0.";
-            while (DataGridView.SelectedItems.Count >= 1) /*При удалении рядов нужно обновлять колонку баланса.
-                Для этого я написал элементарный алгоритм, использующий временные переменные. Вышло громоздко*/
+            while (DataGridView.SelectedItems.Count >= 1) 
             {
                 decimal tmpInc; //доход
                 decimal tmpExp; //расход
@@ -154,9 +153,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (OverflowException) { MessageBox.Show(warningB, titleB); }
         }
 
-        private void UpdateTotal() /*обновление показаний баланса, написал вручную. 
-            (не стал имплементировать INotifyPropertyChanged интерфейс, хотя слышал, 
-            что это, вроде бы, гораздо более адекватный способ регистрировать изменения)*/
+        private void UpdateTotal() 
         {
             decimal total;
             try
@@ -187,7 +184,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (InvalidCastException) { MessageBox.Show(warning, warningTitle); }
         }
 
-        private void BtnAbout_Click(object sender, RoutedEventArgs e) //информационная сводка о создателе
+        private void BtnAbout_Click(object sender, RoutedEventArgs e) //информационная сводка о создателе + горячие клавиши
         {
             String info = "This software is open-source and available for " +
             "everyone to change/use/modify etc. If you need the project files, " +
@@ -204,70 +201,17 @@ namespace Personal_Budget_Assistant__Main_
             saveFileDialog.Filter = "XML-File | *.xml";
             if (saveFileDialog.ShowDialog() == true)
                 dataSource.getDataTable().WriteXml(saveFileDialog.FileName);
-            path = openFileDialog.FileName;
+            pathXml = this.saveFileDialog.FileName;
+            isXmlPath = true;
+            Settings.Default.pathXml = pathXml;
+            Settings.Default.Save();
         }
 
-        private void BtnSaveAs_Click(object sender, RoutedEventArgs e) // кнопка "сохранить как XML"
+        private void BtnSaveAsXml_Click(object sender, RoutedEventArgs e) // кнопка "сохранить как XML"
         {
             SaveAsXml();
         }
 
-        private void BtnSave_Click(object sender, RoutedEventArgs e) /* тут я пытался сделать так,
-            чтобы программа, один раз получив путь сохранения файла в xml могла сохранять изменения при
-            нажатии на эту кнопку без вывода диалогового окна. Для этого создал переменную path, поробовал
-            добавить в settings, но пока так и не понял, как это правильно сделать. */
-
-        {
-            string warning = "Couldn't find saved path!";
-            string title = "Unknown path error";
-            try
-            {
-                dataSource.getDataTable().WriteXml(path);
-            }
-            catch (ArgumentException) { MessageBox.Show(warning, title); }
-        }
-
-        private void BtnOpen_Click(object sender, RoutedEventArgs e) // кнопка "открыть XML"
-        {
-            openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
-            path = openFileDialog.FileName;
-            if (openFileDialog.ShowDialog() == true)
-                dataSource.getDataTable().Rows.Clear();
-            try
-            {
-                dataSource.getDataTable().ReadXml(openFileDialog.FileName);
-                UpdateTotal();
-            }
-            catch (ArgumentException) { return; }
-            catch (XmlException) { return; }
-        }
-
-        private void BtnOpenExcel(object sender, RoutedEventArgs e)  // импорт из excel
-            /* Важно: файл, созданный не программой, должен соответствовать колонкам таблицы */
-        {
-            string warning = "Your excel file contains duplicate column!";
-            string title = "Duplicate Column";
-            openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx;|All files (*.*)|*.*";
-            if (openFileDialog.ShowDialog() == true)
-            {
-                book.LoadFromFile(openFileDialog.FileName);
-            }
-            try
-            {
-            DataTable table = book.Worksheets[0].ExportDataTable(); 
-            data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
-            data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2016);
-                foreach (DataRow dr in table.Rows)
-                {
-                dataSource.getDataTable().ImportRow(dr);
-                }
-                UpdateTotal();
-            }
-            catch (ArgumentNullException) { return;  }
-            catch (ArgumentException) { return; }
-            catch (DuplicateNameException) { MessageBox.Show(warning,title); }
-        }
-        
         private void SaveAsExcel()
         {
             try
@@ -282,15 +226,88 @@ namespace Personal_Budget_Assistant__Main_
                 sheet.AllocatedRange.AutoFitRows();
                 //Save the file
                 workbook.SaveToFile(saveFileDialog.FileName, ExcelVersion.Version2016);
+                pathExcel = this.saveFileDialog.FileName;
+                isXmlPath = false;
+                Settings.Default.pathExcel = pathExcel;
+                Settings.Default.Save();
             }
             catch (ArgumentOutOfRangeException) { return; }
         }
+
         private void BtnSaveToExcel(object sender, RoutedEventArgs e) //сохранение в excel
         {
             SaveAsExcel();
         }
 
-        private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void BtnSave_Click(object sender, RoutedEventArgs e) 
+        {
+            string warning = "Couldn't find saved path!";
+            string title = "Unknown path error";
+            try
+            {
+                if (isXmlPath) //doesn't save path
+                {
+                    dataSource.getDataTable().WriteXml(pathXml);
+                }
+                else if (!isXmlPath) //works
+                {
+                    Workbook workbook = new Workbook();
+                    Worksheet sheet = workbook.Worksheets[0];
+                    sheet.InsertDataTable((DataTable)this.dataSource.getDataTable(), true, 1, 1, -1, -1);
+                    sheet.AllocatedRange.AutoFitColumns();
+                    sheet.AllocatedRange.AutoFitRows();
+                    workbook.SaveToFile(pathExcel, ExcelVersion.Version2016);
+                }
+            }          
+            catch (ArgumentException) { MessageBox.Show(warning, title); }
+        }
+
+        private void BtnOpenXML_Click(object sender, RoutedEventArgs e) // кнопка "открыть XML"
+        {
+            openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
+            pathXml = openFileDialog.FileName; 
+            if (openFileDialog.ShowDialog() == true)
+                dataSource.getDataTable().Rows.Clear();
+            pathXml = openFileDialog.FileName;
+            isXmlPath = true;
+            try 
+            {
+                dataSource.getDataTable().ReadXml(openFileDialog.FileName);
+                UpdateTotal();
+            }
+            catch (ArgumentException) { return; }
+            catch (XmlException) { return; }
+        }
+
+        private void BtnOpenExcel(object sender, RoutedEventArgs e)  // импорт из excel
+        /* Важно: файл, созданный не программой, должен соответствовать колонкам таблицы */
+        {
+            string warning = "Your excel file contains duplicate column!";
+            string title = "Duplicate Column";
+            openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx;|All files (*.*)|*.*";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                book.LoadFromFile(openFileDialog.FileName);
+            }
+            try
+            {
+                DataTable table = book.Worksheets[0].ExportDataTable();
+                data_book.Worksheets[0].InsertDataTable(table, true, 1, 1);
+                data_book.SaveToFile(openFileDialog.FileName, ExcelVersion.Version2016);
+                foreach (DataRow dr in table.Rows)
+                {
+                    dataSource.getDataTable().ImportRow(dr);
+                }
+                UpdateTotal();
+                pathExcel = openFileDialog.FileName;
+                isXmlPath = false;
+            }
+            catch (ArgumentNullException) { return; }
+            catch (ArgumentException) { return; }
+            catch (DuplicateNameException) { MessageBox.Show(warning, title); }
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.R))
             {
@@ -311,10 +328,9 @@ namespace Personal_Budget_Assistant__Main_
         }
 
 
-
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-
+         
         }
 
         private void SavingsField1_TextChanged(object sender, TextChangedEventArgs e)

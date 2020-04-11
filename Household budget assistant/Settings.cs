@@ -7,7 +7,7 @@
     //  Событие SettingsLoaded возникает после загрузки значений параметров.
     //  Событие SettingsSaving возникает перед сохранением значений параметров.
     internal sealed partial class Settings {
-        
+
         public Settings() {
             // // Для добавления обработчиков событий для сохранения и изменения параметров раскомментируйте приведенные ниже строки:
             //
@@ -16,11 +16,14 @@
              this.SettingsSaving += this.SettingsSavingEventHandler;
             //
         }
-        
+
+        internal string pathXml;
+        internal string pathExcel;
+
         private void SettingChangingEventHandler(object sender, System.Configuration.SettingChangingEventArgs e) {
             // Добавьте здесь код для обработки события SettingChangingEvent.
         }
-        
+
         private void SettingsSavingEventHandler(object sender, System.ComponentModel.CancelEventArgs e) {
             // Добавьте здесь код для обработки события SettingsSaving.
         }

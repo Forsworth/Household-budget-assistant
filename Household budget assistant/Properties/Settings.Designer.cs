@@ -22,17 +22,15 @@ namespace Household_budget_assistant.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("saveFileDialog.FileName")]
-        public string path {
-            get {
-                return ((string)(this["path"]));
-            }
-            set {
-                this["path"] = value;
-            }
+
+        public string GetpathExcel()
+        {
+            return ((string)(this["path"]));
+        }
+
+        public void SetpathExcel(string value)
+        {
+            this["path"] = value;
         }
     }
 }
