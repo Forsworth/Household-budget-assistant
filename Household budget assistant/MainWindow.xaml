@@ -41,10 +41,20 @@
             </MenuItem>
         </Menu>
         <ComboBox x:Name="CbbxType" Margin="115,48,0,0" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129" SelectedValuePath="Content" >
-            <ComboBoxItem Background="#FFCEFFD0" Content="Food" FontSize="11"/>
-            <ComboBoxItem Background="#FFF97C76" Content="Bills"/>
-            <ComboBoxItem Background="#FF3499FF" Content="Entertainment"/>
-            <ComboBoxItem Background="#FF00F000" Content="Health"/>
+            <ComboBoxItem  Content="Food" FontSize="11"/>
+            <ComboBoxItem  Content="Bills"/>
+            <ComboBoxItem  Content="Entertainment"/>
+            <ComboBoxItem  Content="Education"/>
+			<ComboBoxItem  Content="Salary"/>
+			<ComboBoxItem  Content="Side income"/>
+			<ComboBoxItem  Content="Shopping"/>
+			<ComboBoxItem  Content="Beauty and Health"/>
+			<ComboBoxItem  Content="Car"/>
+			<ComboBoxItem  Content="Repairs"/>
+			<ComboBoxItem  Content="Real estate"/>
+			<ComboBoxItem  Content="Rent"/>
+			<ComboBoxItem  Content="Unexpected expenses"/>
+			<ComboBoxItem  Content="Miscellaneous"/>
         </ComboBox>
         <Label x:Name="TypeField" Content="Type" HorizontalAlignment="Left" Margin="159,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
         <TextBox x:Name="BalanceBox" Margin="0,0,14,26" TextWrapping="Wrap" HorizontalAlignment="Right" Width="120" IsEnabled="False" Height="18" VerticalAlignment="Bottom"/>

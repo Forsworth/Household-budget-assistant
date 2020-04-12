@@ -40,6 +40,7 @@ namespace Personal_Budget_Assistant__Main_
             DataGridView.ItemsSource = dataSource.getDataTable().AsDataView(); //для отображения таблицы в датагриде
         }
 
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             TTipAddRow(); 
@@ -188,10 +189,9 @@ namespace Personal_Budget_Assistant__Main_
         private void BtnAbout_Click(object sender, RoutedEventArgs e) //информационная сводка о создателе + горячие клавиши
         {
             String info = "This software is open-source and available for " +
-            "everyone to change/use/modify etc. If you need the project files, " +
-            "or any additional info, e-mail me at *E-MAIL ADDRESS*" +
-            "\n\nHotkeys: Ctrl+R - adds row, Ctrl+D - deletes selected row, " +
-            "Ctrl+S - saves as xml, Ctrl+E - saves as xlsx." +
+            "everyone to change/use/modify etc. The source code is available at https://github.com/Forsworth/Household-budget-assistant" +
+            "\n\nHotkeys: \n\nCtrl+R - Adds a row \n\nCtrl+D - Deletes selected row " +
+            "\n\nCtrl+S - Saves as xml \n\nCtrl+E - Saves as xlsx" +
             "\n\nDeveloped by 'Vekktrsz.', 2020";
             String title = "Household Budget Assistant";
             MessageBox.Show(info, title);
