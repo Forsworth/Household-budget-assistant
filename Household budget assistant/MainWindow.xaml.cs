@@ -10,10 +10,6 @@ using Household_budget_assistant.Properties;
 using LiveCharts;
 using LiveCharts.Wpf;
 
-
-
-
-
 namespace Personal_Budget_Assistant__Main_
 {
     public partial class MainWindow : Window
@@ -52,9 +48,10 @@ namespace Personal_Budget_Assistant__Main_
             string titleA = "Wrong data entered";
             string warningB = "The value is too big to compute!";
             string titleB = "Value Error";
-            try
+            try 
             {
                 DataRow nextRow = dataSource.getDataTable().NewRow();
+                
                 nextRow[0] = DatePicker.SelectedDate.Value.Date.ToShortDateString();
                 nextRow[1] = CbbxType.SelectedValue;
                 nextRow[2] = Convert.ToString(NameField1.Text);
@@ -108,7 +105,6 @@ namespace Personal_Budget_Assistant__Main_
                 {
                     decimal balanceCol = Convert.ToDecimal(BalanceBox.SelectedText);
 
-
                     DataRowView drv = (DataRowView)DataGridView.SelectedItem;
                     tmpInc = Convert.ToDecimal(drv.Row.ItemArray.GetValue(3));
                     tmpExp = Convert.ToDecimal(drv.Row.ItemArray.GetValue(4));
@@ -118,7 +114,7 @@ namespace Personal_Budget_Assistant__Main_
                     if (dataSource.getDataTable().Rows.Count > 0)
                     {
                         BalanceBox.SelectedText = result.ToString();
-                        UpdateTotal(); //обновляем таблицу
+                        UpdateTotal(); 
                     }
                     else BalanceBox.SelectedText = Convert.ToString(0);
                     UpdateTotal();
@@ -192,6 +188,7 @@ namespace Personal_Budget_Assistant__Main_
             "everyone to change/use/modify etc. The source code is available at https://github.com/Forsworth/Household-budget-assistant" +
             "\n\nHotkeys: \n\nCtrl+R - Adds a row \n\nCtrl+D - Deletes selected row " +
             "\n\nCtrl+S - Saves as xml \n\nCtrl+E - Saves as xlsx" +
+            "\n\nCtrl+U - Shows/Updates Chart" +
             "\n\nDeveloped by 'Vekktrsz.', 2020";
             String title = "Household Budget Assistant";
             MessageBox.Show(info, title);
@@ -221,11 +218,9 @@ namespace Personal_Budget_Assistant__Main_
                 Worksheet sheet = workbook.Worksheets[0];
                 saveFileDialog.Filter = "excel file | *.xlsx;*xls;";
                 if (saveFileDialog.ShowDialog() == true)
-                    //Export datatable to excel
                     sheet.InsertDataTable((DataTable)this.dataSource.getDataTable(), true, 1, 1, -1, -1);
                 sheet.AllocatedRange.AutoFitColumns();
                 sheet.AllocatedRange.AutoFitRows();
-                //Save the file
                 workbook.SaveToFile(saveFileDialog.FileName, ExcelVersion.Version2016);
                 pathExcel = this.saveFileDialog.FileName;
                 isXmlPath = false;
@@ -287,7 +282,10 @@ namespace Personal_Budget_Assistant__Main_
             openFileDialog.Filter = "excel files (*.xlsx)|*xls;*.xlsx;|All files (*.*)|*.*";
             if (openFileDialog.ShowDialog() == true)
             {
-                book.LoadFromFile(openFileDialog.FileName);
+                try
+                {
+                    book.LoadFromFile(openFileDialog.FileName);
+                } catch (InvalidOperationException) { return; }
             }
             try
             {
@@ -325,6 +323,10 @@ namespace Personal_Budget_Assistant__Main_
             {
                 SaveAsExcel();
             }
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.U))
+            {
+                DisplayChart();
+            }
         }
 
         private void ShowChart(object sender, RoutedEventArgs e)
@@ -334,40 +336,25 @@ namespace Personal_Budget_Assistant__Main_
 
         private void DisplayChart()
         {
-            try {
-                decimal Income = Convert.ToInt64
-                (dataSource.getDataTable().Compute("SUM(Income)", string.Empty));
-                decimal Expense = Convert.ToInt64
+            try { 
+            TestGrid.Children.Clear();
+                decimal Income = Convert.ToDecimal
+                    (dataSource.getDataTable().Compute("SUM(Income)", string.Empty));
+                decimal Expense = Convert.ToDecimal
                     (dataSource.getDataTable().Compute("SUM(Expenses)", string.Empty));
-                decimal total = Income - Expense;
-
-                CartesianChart ch = new CartesianChart();
-                ch.Series = new SeriesCollection
+                CartesianChart chart1 = new CartesianChart();
+                chart1.Series = new SeriesCollection
             {
         new LineSeries
-            {
+                {
             Title = "Income/Expenses",
-            Values = new ChartValues<decimal> { Convert.ToInt64(Income), Convert.ToInt64(Expense) }
-            }
+            Values = new ChartValues<decimal> { Convert.ToDecimal(Income), Convert.ToDecimal(Expense) }
+                }
             };
-                TestGrid.Children.Add(ch);
+                TestGrid.Children.Add(chart1);
             }
             catch (InvalidCastException) { MessageBox.Show("Make sure you have added some data in the table!","Missing data");}
-
-        }
-
-        private void UpdateChart(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                TestGrid.Children.RemoveAt(0);
-            } catch(ArgumentOutOfRangeException) { return; }
-            DisplayChart();
-        }
-
-        private void SavingsField1_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
+            catch (ArgumentOutOfRangeException) { return; }
         }
     }
 }
