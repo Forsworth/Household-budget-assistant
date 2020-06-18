@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Personal_Budget_Assistant__Main_"
         mc:Ignorable="d"
-        Title="Household Budget Assistant (Alpha v.0.6 stable)" Height="579" Width="1009" Loaded="Window_Loaded" Background="#FF92ABC3" KeyDown="Window_KeyDown" Icon="1462406.png" WindowStartupLocation="CenterScreen">
-    <Grid>
-        <DataGrid x:Name="DataGridView" Margin="10,77,14,49" Background="#FFE6E6E6" ColumnWidth="132" IsManipulationEnabled="True" SelectionChanged="DataGridView_SelectionChanged" IsReadOnly="True"/>
+        Title="Household Budget Assistant (Alpha v.0.9.1 stable)" Height="857" Width="1009" Loaded="Window_Loaded" Background="#FF92ABC3" KeyDown="Window_KeyDown" Icon="1462406.png" WindowStartupLocation="CenterScreen">
+    <Grid Margin="0,0,2,-1">
+        <DataGrid x:Name="DataGridView" Margin="10,77,14,241" Background="#FFE6E6E6" ColumnWidth="132" IsManipulationEnabled="True"  IsReadOnly="True"/>
+        <Grid Name="TestGrid" RenderTransformOrigin="0.544,1.186" Margin="115,0,0,75" Height="125" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="594"/>
         <Label Content="Date" HorizontalAlignment="Left" Margin="42,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132" FontFamily="Segoe UI"/>
         <Label x:Name="NameField" Content="Name" HorizontalAlignment="Left" Margin="279,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
         <TextBox x:Name="NameField1" HorizontalAlignment="Left" Margin="249,51,0,0" TextWrapping="Wrap" Width="120" Height="18" VerticalAlignment="Top"/>
@@ -21,7 +22,7 @@
         <TextBox x:Name="SavingsField1" HorizontalAlignment="Left" Margin="624,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" TextChanged="SavingsField1_TextChanged"/>
         <Button x:Name="BtnAddRow" Content="Add Item" Margin="874,48,0,0" VerticalAlignment="Top" Click="BtnAddRow_Click" Height="21" HorizontalAlignment="Left" Width="70"/>
         <Menu Height="25" VerticalAlignment="Top" Background="#FFE8E8E8">
-            <MenuItem Header="File" Height="24" Width="40" Click="MenuItem_Click">
+            <MenuItem Header="File" Height="24" Width="40">
                 <MenuItem Header="Save"  Click="BtnSave_Click" ></MenuItem>
                 <MenuItem Header="Open (.xml)"  Click="BtnOpenXML_Click" ></MenuItem>
                 <MenuItem Header="Save As (.xml)"  Click="BtnSaveAsXml_Click"></MenuItem>
@@ -39,26 +40,29 @@
                 <MenuItem Header="Balance"  Click="BtnTotal_Click"></MenuItem>
                 <MenuItem Header="Savings"  Click="BtnSavings_Click"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Show Chart" Click="ShowChart">
+            </MenuItem>
+
         </Menu>
         <ComboBox x:Name="CbbxType" Margin="115,48,0,0" Height="21" VerticalAlignment="Top" HorizontalAlignment="Left" Width="129" SelectedValuePath="Content" >
             <ComboBoxItem  Content="Food" FontSize="11"/>
             <ComboBoxItem  Content="Bills"/>
             <ComboBoxItem  Content="Entertainment"/>
             <ComboBoxItem  Content="Education"/>
-			<ComboBoxItem  Content="Salary"/>
-			<ComboBoxItem  Content="Side income"/>
-			<ComboBoxItem  Content="Shopping"/>
-			<ComboBoxItem  Content="Beauty and Health"/>
-			<ComboBoxItem  Content="Car"/>
-			<ComboBoxItem  Content="Repairs"/>
-			<ComboBoxItem  Content="Real estate"/>
-			<ComboBoxItem  Content="Rent"/>
-			<ComboBoxItem  Content="Unexpected expenses"/>
-			<ComboBoxItem  Content="Miscellaneous"/>
+            <ComboBoxItem  Content="Salary"/>
+            <ComboBoxItem  Content="Side income"/>
+            <ComboBoxItem  Content="Shopping"/>
+            <ComboBoxItem  Content="Beauty and Health"/>
+            <ComboBoxItem  Content="Car"/>
+            <ComboBoxItem  Content="Repairs"/>
+            <ComboBoxItem  Content="Real estate"/>
+            <ComboBoxItem  Content="Rent"/>
+            <ComboBoxItem  Content="Unexpected expenses"/>
+            <ComboBoxItem  Content="Miscellaneous"/>
         </ComboBox>
         <Label x:Name="TypeField" Content="Type" HorizontalAlignment="Left" Margin="159,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
-        <TextBox x:Name="BalanceBox" Margin="0,0,14,26" TextWrapping="Wrap" HorizontalAlignment="Right" Width="120" IsEnabled="False" Height="18" VerticalAlignment="Bottom"/>
-        <Label Content="Balance:" Margin="0,0,139,18" HorizontalAlignment="Right" Width="53" RenderTransformOrigin="0.5,0.5" Height="31" VerticalAlignment="Bottom">
+        <TextBox x:Name="BalanceBox" Margin="374,0,0,47" TextWrapping="Wrap" HorizontalAlignment="Left" Width="120" IsEnabled="False" Height="18" VerticalAlignment="Bottom"/>
+        <Label Content="Balance:" Margin="316,0,0,39" HorizontalAlignment="Left" Width="53" RenderTransformOrigin="0.5,0.5" Height="31" VerticalAlignment="Bottom">
             <Label.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="1"/>
@@ -70,5 +74,36 @@
         </Label>
         <TextBox x:Name="CommentsField" HorizontalAlignment="Left" Height="18" Margin="749,51,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="SavingsField_Copy" Content="Comments" HorizontalAlignment="Left" Margin="772,27,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.281,0.132"/>
+        <Label Content="Income" Margin="42,0,0,125" HorizontalAlignment="Left" Width="53" RenderTransformOrigin="0.434,-0.774" Height="31" VerticalAlignment="Bottom">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Content="Expenses" Margin="730,0,0,125" HorizontalAlignment="Left" Width="60" RenderTransformOrigin="12.226,0.839" Height="31" VerticalAlignment="Bottom">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Label Content="Overall Balance Delta" Margin="343,0,0,205" HorizontalAlignment="Left" Width="151" RenderTransformOrigin="12.226,0.839" Height="31" VerticalAlignment="Bottom">
+            <Label.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Label.RenderTransform>
+        </Label>
+        <Button Content="Update Chart" Margin="475,0,0,213" HorizontalAlignment="Left" Width="80" Click="UpdateChart" Height="20" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>

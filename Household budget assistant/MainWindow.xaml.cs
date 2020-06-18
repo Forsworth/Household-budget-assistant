@@ -6,14 +6,13 @@ using System.Windows.Controls;
 using Spire.Xls;
 using System.Xml;
 using System.Windows.Input;
-using Household_budget_assistant.Properties;
+using Household_budget_assistant.Properties;  
+using LiveCharts;
+using LiveCharts.Wpf;
 
 
-/* 
-Известные баги/недоделки:
-- сделать график отображения данных 
-- программа должна сохранять состояние при закрытии
-*/
+
+
 
 namespace Personal_Budget_Assistant__Main_
 {
@@ -28,22 +27,23 @@ namespace Personal_Budget_Assistant__Main_
         private string pathExcel = Settings.Default.pathExcel;
         private bool isXmlPath;
 
+
         public MainWindow()
         {
             InitializeComponent();
-            dataSource = new DataSourceTable(); 
+            dataSource = new DataSourceTable();
             openFileDialog = new OpenFileDialog();
             saveFileDialog = new SaveFileDialog();
             book = new Workbook();
             data_book = new Workbook();
             dataSource.FillDataGridView();
-            DataGridView.ItemsSource = dataSource.getDataTable().AsDataView(); //для отображения таблицы в датагриде
+            DataGridView.ItemsSource = dataSource.getDataTable().AsDataView(); 
         }
 
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            TTipAddRow(); 
+            TTipAddRow();
         }
 
         private void AddRow()
@@ -51,7 +51,7 @@ namespace Personal_Budget_Assistant__Main_
             string warningA = "Wrong input. Make sure you filled all fields with correct data!";
             string titleA = "Wrong data entered";
             string warningB = "The value is too big to compute!";
-            string titleB = "Value Error"; 
+            string titleB = "Value Error";
             try
             {
                 DataRow nextRow = dataSource.getDataTable().NewRow();
@@ -71,7 +71,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (FormatException) { MessageBox.Show(warningA, titleA); }
             catch (InvalidOperationException) { MessageBox.Show(warningA, titleA); }
         }
-        private void BtnAddRow_Click(object sender, RoutedEventArgs e) //добавление рядов
+        private void BtnAddRow_Click(object sender, RoutedEventArgs e) 
         {
             AddRow();
         }
@@ -84,11 +84,11 @@ namespace Personal_Budget_Assistant__Main_
             BtnAddRow.ToolTip = toolTip;
         }
 
-        private void BtnDeleteAll_Click(object sender, RoutedEventArgs e) //удаление всех рядов
+        private void BtnDeleteAll_Click(object sender, RoutedEventArgs e)
         {
             string warning = "Are you sure you want to erase all data from the current table?";
             string title = "Delete all rows?";
-            if (MessageBox.Show(warning, title, MessageBoxButton.YesNo, 
+            if (MessageBox.Show(warning, title, MessageBoxButton.YesNo,
                 MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 dataSource.getDataTable().Rows.Clear();
             BalanceBox.SelectedText = Convert.ToString(0);
@@ -98,7 +98,7 @@ namespace Personal_Budget_Assistant__Main_
         {
             string warning = "Some computed fields " +
         "contain null values! Please change the source file null values by 0.";
-            while (DataGridView.SelectedItems.Count >= 1) 
+            while (DataGridView.SelectedItems.Count >= 1)
             {
                 decimal tmpInc; //доход
                 decimal tmpExp; //расход
@@ -128,12 +128,12 @@ namespace Personal_Budget_Assistant__Main_
             }
         }
 
-        private void BtnDeleteSelected_Click(object sender, RoutedEventArgs e) //выборочное удаление рядов
+        private void BtnDeleteSelected_Click(object sender, RoutedEventArgs e) 
         {
             DeleteSelectedRow();
         }
 
-        private void BtnTotal_Click(object sender, RoutedEventArgs e) //кнопка подсчета общего баланса
+        private void BtnTotal_Click(object sender, RoutedEventArgs e) 
         {
             decimal total;
             string warningA = "Not enough data to make the calculation!";
@@ -155,7 +155,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (OverflowException) { MessageBox.Show(warningB, titleB); }
         }
 
-        private void UpdateTotal() 
+        private void UpdateTotal()
         {
             decimal total;
             try
@@ -171,7 +171,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (OverflowException) { return; }
         }
 
-        private void BtnSavings_Click(object sender, RoutedEventArgs e) //кнопка подсчета накоплений
+        private void BtnSavings_Click(object sender, RoutedEventArgs e) 
         {
             string warning = "Not enough data to make the calculation!";
             string warningTitle = "Wrong data";
@@ -186,7 +186,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (InvalidCastException) { MessageBox.Show(warning, warningTitle); }
         }
 
-        private void BtnAbout_Click(object sender, RoutedEventArgs e) //информационная сводка о создателе + горячие клавиши
+        private void BtnAbout_Click(object sender, RoutedEventArgs e) 
         {
             String info = "This software is open-source and available for " +
             "everyone to change/use/modify etc. The source code is available at https://github.com/Forsworth/Household-budget-assistant" +
@@ -208,7 +208,7 @@ namespace Personal_Budget_Assistant__Main_
             Settings.Default.Save();
         }
 
-        private void BtnSaveAsXml_Click(object sender, RoutedEventArgs e) // кнопка "сохранить как XML"
+        private void BtnSaveAsXml_Click(object sender, RoutedEventArgs e) 
         {
             SaveAsXml();
         }
@@ -235,22 +235,22 @@ namespace Personal_Budget_Assistant__Main_
             catch (ArgumentOutOfRangeException) { return; }
         }
 
-        private void BtnSaveToExcel(object sender, RoutedEventArgs e) //сохранение в excel
+        private void BtnSaveToExcel(object sender, RoutedEventArgs e) 
         {
             SaveAsExcel();
         }
 
-        private void BtnSave_Click(object sender, RoutedEventArgs e) 
+        private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
             string warning = "Couldn't find saved path!";
             string title = "Unknown path error";
             try
             {
-                if (isXmlPath) //works
+                if (isXmlPath) 
                 {
                     dataSource.getDataTable().WriteXml(pathXml);
                 }
-                else if (!isXmlPath) //works
+                else if (!isXmlPath) 
                 {
                     Workbook workbook = new Workbook();
                     Worksheet sheet = workbook.Worksheets[0];
@@ -259,19 +259,19 @@ namespace Personal_Budget_Assistant__Main_
                     sheet.AllocatedRange.AutoFitRows();
                     workbook.SaveToFile(pathExcel, ExcelVersion.Version2016);
                 }
-            }          
+            }
             catch (ArgumentException) { MessageBox.Show(warning, title); }
         }
 
-        private void BtnOpenXML_Click(object sender, RoutedEventArgs e) // кнопка "открыть XML"
+        private void BtnOpenXML_Click(object sender, RoutedEventArgs e) 
         {
             openFileDialog.Filter = "xml files (*.xml)|*.xml;|All files (*.*)|*.*";
-            pathXml = openFileDialog.FileName; 
+            pathXml = openFileDialog.FileName;
             if (openFileDialog.ShowDialog() == true)
                 dataSource.getDataTable().Rows.Clear();
             pathXml = openFileDialog.FileName;
             isXmlPath = true;
-            try 
+            try
             {
                 dataSource.getDataTable().ReadXml(openFileDialog.FileName);
                 UpdateTotal();
@@ -280,8 +280,7 @@ namespace Personal_Budget_Assistant__Main_
             catch (XmlException) { return; }
         }
 
-        private void BtnOpenExcel(object sender, RoutedEventArgs e)  // импорт из excel
-        /* Важно: файл, созданный не программой, должен соответствовать колонкам таблицы */
+        private void BtnOpenExcel(object sender, RoutedEventArgs e)  
         {
             string warning = "Your excel file contains duplicate column!";
             string title = "Duplicate Column";
@@ -316,11 +315,11 @@ namespace Personal_Budget_Assistant__Main_
             }
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.D))
             {
-                DeleteSelectedRow(); 
+                DeleteSelectedRow();
             }
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.S))
             {
-                SaveAsXml();      
+                SaveAsXml();
             }
             if (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.E))
             {
@@ -328,22 +327,47 @@ namespace Personal_Budget_Assistant__Main_
             }
         }
 
-
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void ShowChart(object sender, RoutedEventArgs e)
         {
-         
+            DisplayChart();
+        }
+
+        private void DisplayChart()
+        {
+            try {
+                decimal Income = Convert.ToInt64
+                (dataSource.getDataTable().Compute("SUM(Income)", string.Empty));
+                decimal Expense = Convert.ToInt64
+                    (dataSource.getDataTable().Compute("SUM(Expenses)", string.Empty));
+                decimal total = Income - Expense;
+
+                CartesianChart ch = new CartesianChart();
+                ch.Series = new SeriesCollection
+            {
+        new LineSeries
+            {
+            Title = "Income/Expenses",
+            Values = new ChartValues<decimal> { Convert.ToInt64(Income), Convert.ToInt64(Expense) }
+            }
+            };
+                TestGrid.Children.Add(ch);
+            }
+            catch (InvalidCastException) { MessageBox.Show("Make sure you have added some data in the table!","Missing data");}
+
+        }
+
+        private void UpdateChart(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                TestGrid.Children.RemoveAt(0);
+            } catch(ArgumentOutOfRangeException) { return; }
+            DisplayChart();
         }
 
         private void SavingsField1_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
-
-        private void DataGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-
     }
 }
