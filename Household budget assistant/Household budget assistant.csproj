@@ -144,5 +144,14 @@
   <ItemGroup>
     <Resource Include="1462406.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Productive-Things-To-Do-On-A-Rainy-Day.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="pexels-beach-tropical-scene-free-stock-photo.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="working-space-business-freelance-concept-top-view-flat-lay-with-hands-working-laptop-toning_1220-1629.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
