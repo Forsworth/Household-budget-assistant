@@ -353,7 +353,7 @@ namespace Personal_Budget_Assistant__Main_
             };
                 TestGrid.Children.Add(chart1);
             }
-            catch (InvalidCastException) { MessageBox.Show("Make sure you have added some data in the table!","Missing data");}
+            catch (InvalidCastException) { MessageBox.Show("Make sure you have added some data to the table!","Missing data");}
             catch (ArgumentOutOfRangeException) { return; }
         }
     }
